@@ -174,8 +174,8 @@ class TicTacToe:
             print('please enter a number')
             return False
 
-        if position < 0 or position > 9:
-            print('position must between 0 and 8')
+        if position < 1 or position > 9:
+            print('position must between 1 and 9')
             return False
 
         return position
@@ -201,35 +201,23 @@ class TicTacToe:
         player2_combinations = self.players_combinations['player2']
 
         if len(player1_combinations) >= 3:
-            p1_match_combination = []
             for win_combination in self.win_combinations:
-                for player1_combination in player1_combinations:
-                    if player1_combination in win_combination:
-                        p1_match_combination.append(True)
-                    else:
-                        p1_match_combination.append(False)
-
-                if False in p1_match_combination:
-                    p1_match_combination = []
-                else:
+                combination_correct = all(
+                    combination in player1_combinations for combination in win_combination)
+                if combination_correct:
+                    self.print_board()
                     print('player 1 win')
-                    self.save_result(TicTacToe().game_round(), 'player 1')
+                    self.save_result(self.game_round(), 'player 1')
                     return True
 
         if len(player2_combinations) >= 3:
-            p2_match_combination = []
             for win_combination in self.win_combinations:
-                for player2_combination in player2_combinations:
-                    if player2_combination in win_combination:
-                        p2_match_combination.append(True)
-                    else:
-                        p2_match_combination.append(False)
-
-                if False in p2_match_combination:
-                    p2_match_combination = []
-                else:
+                combination_correct = all(
+                    combination in player2_combinations for combination in win_combination)
+                if combination_correct:
+                    self.print_board()
                     print('player 2 win')
-                    self.save_result(TicTacToe().game_round(), 'player 2')
+                    self.save_result(self.game_round(), 'player 2')
                     return True
 
     def play(self):
