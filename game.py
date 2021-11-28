@@ -118,7 +118,7 @@ class TicTacToe:
 
     def game_finish(self):
         # status of game, after 9 rounds game end
-        return len(self.player_turn_list) == 9
+        return len(self.player_turn_list) > 9
 
     def update_board(self, index, current_player):
         """update the game board list after each round base on 
@@ -186,7 +186,7 @@ class TicTacToe:
         # if 9 turns passed and no winner
         if self.game_finish():
             print('no winner')
-            self.save_result(TicTacToe().game_round(), 'no winner')
+            self.save_result(self.game_round(), 'no winner')
             return True
 
         # check pattern in game board if recognize return True
@@ -226,7 +226,6 @@ class TicTacToe:
                 f'choose number {current_player["player"]}'))
 
             position_validated = self.validate_position_input(position_input)
-            print('position_validated', position_validated)
             while not position_validated:
                 position_input = int(self.user_input(
                     f'choose number {current_player["player"]}'))
@@ -236,8 +235,6 @@ class TicTacToe:
                 self.manage_player_turns(current_player['symb'])
                 self.register_player_combination(
                     current_player['player'], position_input)
-                print('player1', self.players_combinations['player1'])
-                print('player2', self.players_combinations['player2'])
                 self.update_board(position_input, current_player['symb'])
         else:
             self.replay()
@@ -263,5 +260,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.scoreboard:
         TicTacToe().score_board()
+        sys.exit()
 
     TicTacToe().play()
