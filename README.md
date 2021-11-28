@@ -13,9 +13,9 @@ Get project up and running
 The version 2 of the game, available on the [v2 branch] implement the next features
 
 - Solo mode
-  In the solo mode the player play with a computer instead of with a seconf player
-  <python game.py --solo> to activate the solo mode
+  - In the solo mode the player play with a computer instead of with a seconf player
+  - <python game.py --solo> to activate the solo mode
 
 - clear score board
-  Clear register game score
-  <python game.py --clear>
+  - Clear register game score
+  - <python game.py --clear>
