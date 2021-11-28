@@ -1,6 +1,7 @@
 import sys
 import os
 import argparse
+import random
 
 
 class TicTacToe:
@@ -141,9 +142,25 @@ class TicTacToe:
 
         return u_input
 
-    def add_player_to_game(self):
-        # handel the players registry(check if players symbol are not the same,
-        # of player has give a symbol), add the players given data when gamew started to registry list
+    def add_player_to_game(self, solo=False):
+        """ handel the players registry(check if players symbol are not the same,
+        of player has give a symbol), add the players given data when gamew started to registry list
+        solo mode => play against computer
+        dual mode => plays against another player
+
+        Args:
+            solo (bool, optional): [determine if player wanna lay in solo mode or not]. Defaults to False.
+        """
+
+        if solo:
+            self.register_player('player1', 'O')
+            player2 = self.user_input('Player 2 Choose symbol')
+            while str(player2.lower()) == 'o':
+                print('symbol already in use, player 2 choose another one')
+                player2 = self.user_input('player2 Choose symbol')
+            else:
+                self.register_player('player2', player2)
+
         player1 = self.user_input('Player 1 Choose symbol')
         self.register_player('player1', player1)
 
@@ -163,7 +180,7 @@ class TicTacToe:
             current_player (str): [player symbol]
 
         Returns:
-            [type]: [description]
+            [int]: [game board list index]
         """
         try:
             position = int(self.user_input(f'choose number {current_player}'))
@@ -193,7 +210,7 @@ class TicTacToe:
         # if 9 turns passed and no winner
         if self.game_finish():
             print('no winner')
-            self.save_result(TicTacToe().game_round(), 'no winner')
+            self.save_result(self.game_round(), 'no winner')
             return True
 
         # check pattern in game board if recognize return True
@@ -220,8 +237,8 @@ class TicTacToe:
                     self.save_result(self.game_round(), 'player 2')
                     return True
 
-    def play(self):
-        # register user
+    def play(self, solo=False):
+        # register player
         self.add_player_to_game()
 
         while not self.winner():
@@ -230,26 +247,44 @@ class TicTacToe:
 
             current_player = self.turn_of()
 
-            position_input = self.validate_position_input(
-                current_player['player'])
-
-            while not position_input:
+            if solo and current_player['player'] == 'player1':
+                position_input = self.computer_mvement()
+            else:
                 position_input = self.validate_position_input(
                     current_player['player'])
+
+            while not position_input:
+                if solo and current_player['player'] == 'player1':
+                    position_input = self.computer_mvement()
+                else:
+                    position_input = self.validate_position_input(
+                        current_player['player'])
             else:
                 self.manage_player_turns(current_player['symb'])
                 self.register_player_combination(
                     current_player['player'], position_input)
                 self.update_board(position_input, current_player['symb'])
         else:
-            replay = input("Replay?[y/n - Y/N]")
-            while replay.lower() not in ['n', 'y']:
-                replay = input("Replay?[y/n - Y/N]")
+            self.replay()
 
-            if replay.lower() == 'n':
-                sys.exit()
-            else:
-                self.replay()
+    def computer_mvement(self):
+        """computer random mouvement base on the current state of the game board
+
+        Args:
+            position (int): [list index representing the position on the game board]
+
+        Returns:
+            [int]: [game board list index]
+        """
+        pass
+
+    def solo_mode(self):
+        # register player
+        self.add_player_to_game(solo=True)
+        self.play(solo=True)
+
+    def dual_mode(self):
+        self.play()
 
     def replay(self):
         replay = input("Replay?[y/n - Y/N]")
@@ -265,12 +300,17 @@ class TicTacToe:
 
 if __name__ == "__main__":
     # print score board if arg given
-    parser = argparse.ArgumentParser(description='Print score board')
+    parser = argparse.ArgumentParser(description='Use game extra features')
     parser.add_argument(
         '--scoreboard', action='store_true', help='score board')
+    parser.add_argument(
+        '--solo', action='store_true', help='solo mode')
 
     args = parser.parse_args()
     if args.scoreboard:
         TicTacToe().score_board()
 
-    TicTacToe().play()
+    if args.solo:
+        TicTacToe().solo_mode()
+
+    TicTacToe().dual_mode()
