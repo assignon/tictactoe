@@ -5,8 +5,8 @@ import argparse
 
 class TicTacToe:
     def __init__(self):
-        self.board = ['', '(1)', '(2)', '(3)',
-                      '(4)', '(5)', '(6)', '(7)', '(8)', '(9)']
+        self.board = ['', '1', '2', '3',
+                      '4', '5', '6', '7', '8', '9']
         self.player_turn_list = []  # players symbol
         self.player_registry = []  # {'player': playername, 'symb': 0}
         self.players_combinations = {'player1': [], 'player2': []}
@@ -58,17 +58,17 @@ class TicTacToe:
         self.player_turn_list = []
         self.player_registry = []
         self.players_combinations = {'player1': [], 'player2': []}
-        self.board = self.board = ['', '(1)', '(2)', '(3)',
-                                   '(4)', '(5)', '(6)', '(7)', '(8)', '(9)']
+        self.board = self.board = ['', '1', '2', '3',
+                                   '4', '5', '6', '7', '8', '9']
 
     def print_board(self):
         print("\n")
         print("{}  |  {}  |  {} ".format(
             self.board[1], self.board[2], self.board[3]))
-        print("---------------------")
+        print("---------------")
         print("{}  |  {}  |  {} ".format(
             self.board[4], self.board[5], self.board[6]))
-        print("---------------------")
+        print("---------------")
         print("{}  |  {}  |  {} ".format(
             self.board[7], self.board[8], self.board[9]))
 
@@ -122,16 +122,13 @@ class TicTacToe:
 
     def update_board(self, index, current_player):
         """update the game board list after each round base on 
-        list key who represent position in game
+        game board list index representing position in game
 
         Args:
             index (int): [board list index]
             current_player (str): [player symbol]
         """
-        if index not in self.players_combinations['player1'] or index not in self.players_combinations['player2']:
-            self.board[index] = current_player
-        else:
-            print('position already take')
+        self.board[index] = current_player
 
     def user_input(self, msg):
         u_input = str(input(msg))
@@ -155,30 +152,26 @@ class TicTacToe:
         else:
             self.register_player('player2', player2)
 
-    def validate_position_input(self, current_player):
+    def validate_position_input(self, position):
         """check if the game board list given key(position in board) is type int,
         is not empty and is not present in the game board
 
         Args:
-            current_player (str): [player symbol]
+            position (int): [game boars list index]
 
         Returns:
             [type]: [description]
         """
-        try:
-            position = int(self.user_input(f'choose number {current_player}'))
-        except ValueError:
-            return False
 
-        if position == None:
-            print('please enter a number')
+        if position in self.players_combinations['player1'] or position in self.players_combinations['player2']:
+            print('position already take')
             return False
 
         if position < 1 or position > 9:
             print('position must between 1 and 9')
             return False
 
-        return position
+        return True
 
     def register_player_combination(self, current_player, position_input):
         """by the 3rd round of player, player combination are store in a list
@@ -229,27 +222,25 @@ class TicTacToe:
             self.print_board()
 
             current_player = self.turn_of()
+            position_input = int(self.user_input(
+                f'choose number {current_player["player"]}'))
 
-            position_input = self.validate_position_input(
-                current_player['player'])
-
-            while not position_input:
-                position_input = self.validate_position_input(
-                    current_player['player'])
+            position_validated = self.validate_position_input(position_input)
+            print('position_validated', position_validated)
+            while not position_validated:
+                position_input = int(self.user_input(
+                    f'choose number {current_player["player"]}'))
+                position_validated = self.validate_position_input(
+                    position_input)
             else:
                 self.manage_player_turns(current_player['symb'])
                 self.register_player_combination(
                     current_player['player'], position_input)
+                print('player1', self.players_combinations['player1'])
+                print('player2', self.players_combinations['player2'])
                 self.update_board(position_input, current_player['symb'])
         else:
-            replay = input("Replay?[y/n - Y/N]")
-            while replay.lower() not in ['n', 'y']:
-                replay = input("Replay?[y/n - Y/N]")
-
-            if replay.lower() == 'n':
-                sys.exit()
-            else:
-                self.replay()
+            self.replay()
 
     def replay(self):
         replay = input("Replay?[y/n - Y/N]")
